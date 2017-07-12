@@ -27,24 +27,47 @@ describe Dessert do
   end
 
   describe "#add_ingredient" do
-    it "adds an ingredient to the ingredients array"
+    it "adds an ingredient to the ingredients array" do
+      dessert.add_ingredient('milk')
+      expect(dessert.ingredients).to include('milk')
+    end
   end
 
   describe "#mix!" do
-    it "shuffles the ingredient array"
+    it "shuffles the ingredient array" do
+      unmixed = ['milk', 'yeast', 'eggs', 'flour']
+      unmixed.each { |ing| dessert.add_ingredient(ing) }
+      dessert.mix!
+      expect(dessert.ingredients).to_not eq(unmixed)
+    end
   end
 
   describe "#eat" do
-    it "subtracts an amount from the quantity"
+    it "subtracts an amount from the quantity" do
+      quant = dessert.quantity
+      random_craving = rand(quant) + 1
+      dessert.eat(random_craving)
+      expect(dessert.quantity).to eq(quant - random_craving)
+    end
 
-    it "raises an error if the amount is greater than the quantity"
+    it "raises an error if the amount is greater than the quantity" do
+      expect { dessert.eat(dessert.quantity + 2) }.to raise_error("not enough left!")
+    end
   end
 
   describe "#serve" do
-    it "contains the titleized version of the chef's name"
+    it "contains the titleized version of the chef's name" do
+      allow(chef).to receive(:titleize).and_return('Rattatouile, the french dynamo')
+      expect(chef).to receive(:titleize)
+      dessert.serve
+    end
   end
 
   describe "#make_more" do
-    it "calls bake on the dessert's chef with the dessert passed in"
+    it "calls bake on the dessert's chef with the dessert passed in" do
+      allow(chef).to receive(:bake)
+      expect(chef).to receive(:bake).with(dessert)
+      dessert.make_more
+    end
   end
 end
